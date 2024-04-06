@@ -24,8 +24,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
@@ -47,8 +51,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import au.com.softclient.jetpack_composable_ui2.BottomMenuContent
 import au.com.softclient.jetpack_composable_ui2.Feature
 import au.com.softclient.jetpack_composable_ui2.R
+import au.com.softclient.jetpack_composable_ui2.ui.theme.AquaBlue
 import au.com.softclient.jetpack_composable_ui2.ui.theme.Beige1
 import au.com.softclient.jetpack_composable_ui2.ui.theme.Beige2
 import au.com.softclient.jetpack_composable_ui2.ui.theme.Beige3
@@ -109,11 +115,96 @@ fun HomeScreen(){
                     )
                 )
             )
-
         }
+        BottomMenu(items = listOf(
+            BottomMenuContent("Home", Icons.Default.Home,),
+            BottomMenuContent("Meditate", Icons.Default.Favorite,),
+            BottomMenuContent("Sleep", Icons.Filled.Build,),
+            BottomMenuContent("Music", Icons.Default.AddCircle,),
+            BottomMenuContent("Profile", Icons.Default.AccountCircle,),
+        ),modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
+//BottomMenu
+@Composable
+fun BottomMenu(
+    modifier: Modifier = Modifier,
+    items: List<BottomMenuContent>,
+    activeHighlightColor: Color = ButtonBlue,
+    activeTextColor: Color = Color.White,
+    inactiveTextColor: Color = AquaBlue,
+    InitialSelectedItemIndex: Int = 0,
+    ){
+    var selectedItemIndex by remember {
+        mutableStateOf(InitialSelectedItemIndex)
+    }
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(DeepBlue)
+            .padding(15.dp)
+        ){
+        items.forEachIndexed{ index, item ->
+            BottomMenuItem(
+                item = item,
+                isSelected = index == selectedItemIndex,
+                activeHighlightColor = activeHighlightColor,
+                activeTextColor = activeTextColor,
+                inactiveTextColor = inactiveTextColor,
+            ){
+                selectedItemIndex = index
+            }
+        }
+
+    }
+
+}
+
+//Bottom Menu item
+@Composable
+fun BottomMenuItem(
+    item: BottomMenuContent,
+    isSelected :Boolean = false,
+    activeHighlightColor: Color = ButtonBlue,
+    activeTextColor: Color = Color.White,
+    inactiveTextColor: Color = AquaBlue,
+    onItemClick: () -> Unit
+){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.clickable {
+            onItemClick()
+        }
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
+                .background(
+                    if (isSelected) activeHighlightColor
+                    else Color.Transparent
+                )
+                .padding(10.dp)
+        ) {
+            Icon(
+                imageVector = item.icon,
+                contentDescription = item.title,
+                tint = if(isSelected) activeTextColor else inactiveTextColor,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+        Text(
+            text = item.title,
+            color = if(isSelected) activeHighlightColor else inactiveTextColor,
+         )
+
+    }
+
+}
 
 
 //Section-1
